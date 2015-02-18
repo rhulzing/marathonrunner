@@ -34,6 +34,7 @@ function preload()
 
 var platforms = [];
 var player;
+var level;
 var cursors;
 
 function create()
@@ -77,18 +78,20 @@ function create()
 	//floor = platforms.create(640+32, game.world.height - 64, 'floor');
 
     // Generate our level.
-    var levelgen = new phaserLevelGenerator(game, 'area03');
-    levelgen.generateLevel();
+    level = new phaserLevelGenerator(game, 'area03');
+    level.generateLevel();
 	
 	// create our player
-	player = game.add.sprite(32, game.world.height - 150, 'player');
+	player = game.add.sprite(32, game.world.height - 350, 'player');
 
 	//add physics to our player
-	game.physics.arcade.enable(player);
+	//game.physics.arcade.enable(player);
+    game.physics.enable(player, Phaser.Physics.ARCADE);
 	player.body.gravity.y = 400;
 
 	// add our player animations
 	player.animations.add('left', [0, 1, 2, 3, 4], 10, true);
+    level.addCollisionObject(player);
 
     cursors = game.input.keyboard.createCursorKeys();
 
@@ -97,10 +100,8 @@ function create()
 function update()
 {
 	// collide the player with the platforms.
-	for(var i = 0; i < platforms.length; i++)
-	{
-		game.physics.arcade.collide(player, platforms[i], playRunAnim, null, this);
-	}
+    level.update();
+    
 	player.animations.play('left')
 
     // debug code to check the level out.

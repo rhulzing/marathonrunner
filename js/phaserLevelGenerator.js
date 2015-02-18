@@ -51,11 +51,14 @@ var phaserLevelGenerator = function(phaserGame, levelName)
     this.foreground = null;
     this.collision = null;
 
+    this.collisionObjects = [];
+
     this.playerStart = {x:0, y:0};
 
     this.game = phaserGame;
     this.level = this.game.add.tilemap(levelName);
     this.level.addTilesetImage('forest');
+    this.level.addTilesetImage('metatiles32x32');
 
     this.generatePatchColumn = function(height, segmentLengths, segmentData){
         var patch = new TilePatch().init(0,0,1,height);
@@ -146,6 +149,19 @@ var phaserLevelGenerator = function(phaserGame, levelName)
         return choices[getRandom(0, choices.length)];
     };
 
+    this.addCollisionObject = function(object)
+    {
+        // We will just assume for now that the object being pushed on is valid.
+        //console.log(object);
+        this.collisionObjects.push(object);
+        //this.collisionObjects = object;
+    };
+
+    this.update = function()
+    {
+        this.game.physics.arcade.collide(this.collisionObjects, this.collision);
+    };
+
     this.generateLevel = function()
     {
         var tilesets = this.level.tilesets;
@@ -175,8 +191,11 @@ var phaserLevelGenerator = function(phaserGame, levelName)
         this.background3 = this.level.createLayer("Background3");
         this.background2 = this.level.createLayer("Background2");
         this.background1 = this.level.createLayer("Background1");
+        this.collision = this.level.createLayer("collision");
         this.foreground = this.level.createLayer("Foreground");
-        this.collision = this.level.createLayer("Collision");
+
+        //this.level.setCollisionByExclusion([], true, this.collision);
+        this.level.setCollisionByExclusion([], true, this.foreground);
 
         // resize the world so our whole map can fit.
         this.background3.resizeWorld();
