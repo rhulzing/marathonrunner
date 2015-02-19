@@ -194,6 +194,10 @@ var phaserLevelGenerator = function(phaserGame, levelName)
         this.collision = this.level.createLayer("collision");
         this.foreground = this.level.createLayer("Foreground");
 
+        // Parallaxing!
+        this.background3.scrollFactorX = 0.1;
+        this.background2.scrollFactorX = 0.5;
+
         //this.level.setCollisionByExclusion([], true, this.collision);
         this.level.setCollisionByExclusion([], true, this.foreground);
 

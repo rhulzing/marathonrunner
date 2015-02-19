@@ -17,16 +17,16 @@
 <script type="text/javascript">
 
 var game = new Phaser.Game(640, 480, Phaser.AUTO, '', { preload:
-	preload, create: create, update: update, render: render});
+    preload, create: create, update: update, render: render});
 
 function preload()
 {
-	game.load.image('title', 'game_assets/img/title.png');
-	game.load.image('floor', 'game_assets/img/sprite/ground.png')
-	game.load.spritesheet('player', 'game_assets/img/sprite/runner.png', 32, 32);
-	//game.load.tilemap('area01', 'game_assets/map/area01.json', null, Phaser.Tilemap.TILED_JSON);
-	//game.load.tilemap('area02', 'game_assets/map/area02.json', null, Phaser.Tilemap.TILED_JSON);
-	game.load.tilemap('area03', 'game_assets/map/area03.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.image('title', 'game_assets/img/title.png');
+    game.load.image('floor', 'game_assets/img/sprite/ground.png')
+    game.load.spritesheet('player', 'game_assets/img/sprite/runner.png', 32, 32);
+    //game.load.tilemap('area01', 'game_assets/map/area01.json', null, Phaser.Tilemap.TILED_JSON);
+    //game.load.tilemap('area02', 'game_assets/map/area02.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('area03', 'game_assets/map/area03.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('forest', 'game_assets/img/map/forest.png');
     game.load.image('metatiles32x32', 'game_assets/img/map/metatiles32x32.png');
 
@@ -40,57 +40,57 @@ var cursors;
 function create()
 {
     game.stage.backgroundColor = '#007575';
-	//  We're going to be using physics, so enable the Arcade Physics system
+    //  We're going to be using physics, so enable the Arcade Physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
-	/*game.add.sprite(0, 0, 'title');
+    /*game.add.sprite(0, 0, 'title');
 
-	//platforms = game.add.group();
-	platforms.push(game.add.group());
-	platforms.push(game.add.group());
-	platforms.push(game.add.group());
+    //platforms = game.add.group();
+    platforms.push(game.add.group());
+    platforms.push(game.add.group());
+    platforms.push(game.add.group());
 
-	// enable physics for all our platforms
-	platforms[0].enableBody = true;
-	platforms[1].enableBody = true;
-	platforms[2].enableBody = true;
+    // enable physics for all our platforms
+    platforms[0].enableBody = true;
+    platforms[1].enableBody = true;
+    platforms[2].enableBody = true;
 
-	var x_pos = 0;
+    var x_pos = 0;
 
-	for(var i = 0; i < 5; i++)
-	{
-		var floor = platforms[0].create(x_pos, game.world.height - 64, 'floor');
-		floor.body.immovable = true;
-		x_pos += 32;
-	}
-	for(var i = 0; i < 7; i++)
-	{
-		var floor = platforms[1].create(x_pos, game.world.height - 96, 'floor');
-		floor.body.immovable = true;
-		x_pos += 32;
-	}
-	for(var i = 0; i < 4; i++)
-	{
-		var floor = platforms[2].create(x_pos, game.world.height - 128, 'floor');
-		floor.body.immovable = true;
-		x_pos += 32;
-	}*/
-	//floor = platforms.create(640+32, game.world.height - 64, 'floor');
+    for(var i = 0; i < 5; i++)
+    {
+        var floor = platforms[0].create(x_pos, game.world.height - 64, 'floor');
+        floor.body.immovable = true;
+        x_pos += 32;
+    }
+    for(var i = 0; i < 7; i++)
+    {
+        var floor = platforms[1].create(x_pos, game.world.height - 96, 'floor');
+        floor.body.immovable = true;
+        x_pos += 32;
+    }
+    for(var i = 0; i < 4; i++)
+    {
+        var floor = platforms[2].create(x_pos, game.world.height - 128, 'floor');
+        floor.body.immovable = true;
+        x_pos += 32;
+    }*/
+    //floor = platforms.create(640+32, game.world.height - 64, 'floor');
 
     // Generate our level.
     level = new phaserLevelGenerator(game, 'area03');
     level.generateLevel();
-	
-	// create our player
-	player = game.add.sprite(32, game.world.height - 350, 'player');
+    
+    // create our player
+    player = game.add.sprite(32, game.world.height - 350, 'player');
 
-	//add physics to our player
-	//game.physics.arcade.enable(player);
+    //add physics to our player
+    //game.physics.arcade.enable(player);
     game.physics.enable(player, Phaser.Physics.ARCADE);
-	player.body.gravity.y = 400;
+    player.body.gravity.y = 400;
 
-	// add our player animations
-	player.animations.add('left', [0, 1, 2, 3, 4], 10, true);
+    // add our player animations
+    player.animations.add('left', [0, 1, 2, 3, 4], 10, true);
     level.addCollisionObject(player);
 
     cursors = game.input.keyboard.createCursorKeys();
@@ -99,10 +99,10 @@ function create()
 
 function update()
 {
-	// collide the player with the platforms.
+    // collide the player with the platforms.
     level.update();
     
-	player.animations.play('left')
+    player.animations.play('left')
 
     // debug code to check the level out.
     if(cursors.left.isDown)
@@ -113,50 +113,50 @@ function update()
     {
         game.camera.x += 5;
     }
-	//floor.body.velocity.x = 100;
-	/*platforms[0].forEach(function(sprite) {
-		sprite.body.velocity.x = -100;
-		if (sprite.body.x <= -32)
-		{
-			sprite.body.x = 640;
-		}
-	})
-	platforms[1].forEach(function(sprite) {
-		sprite.body.velocity.x = -100;
-		if (sprite.body.x <= -32)
-		{
-			sprite.body.x = 640;
-		}
-	})
-	platforms[2].forEach(function(sprite) {
-		sprite.body.velocity.x = -100;
-		if (sprite.body.x <= -32)
-		{
-			sprite.body.x = 640;
-		}
-	})*/
+    //floor.body.velocity.x = 100;
+    /*platforms[0].forEach(function(sprite) {
+        sprite.body.velocity.x = -100;
+        if (sprite.body.x <= -32)
+        {
+            sprite.body.x = 640;
+        }
+    })
+    platforms[1].forEach(function(sprite) {
+        sprite.body.velocity.x = -100;
+        if (sprite.body.x <= -32)
+        {
+            sprite.body.x = 640;
+        }
+    })
+    platforms[2].forEach(function(sprite) {
+        sprite.body.velocity.x = -100;
+        if (sprite.body.x <= -32)
+        {
+            sprite.body.x = 640;
+        }
+    })*/
 
-	
+    
 
-	if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) &&
-		player.body.touching.down)
-	{
-		player.body.velocity.y = -300;
-		player.animations.stop();
-	}
-	if(player.body.touching.down)
-	{
-		player.body.velocity.x = 100;
-	}
-	else
-	{
-		player.body.velocity.x = 0;
-	}
+    if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) &&
+        player.body.touching.down)
+    {
+        player.body.velocity.y = -300;
+        player.animations.stop();
+    }
+    if(player.body.touching.down)
+    {
+        player.body.velocity.x = 100;
+    }
+    else
+    {
+        player.body.velocity.x = 0;
+    }
 
-	//if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
-	//{
-	//	player.body.velocity.x -= 50;
-	//}
+    //if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
+    //{
+    //  player.body.velocity.x -= 50;
+    //}
 }
 
 function render()
@@ -166,7 +166,7 @@ function render()
 
 function playRunAnim(player, platform)
 {
-	//player.animations.play('left')
+    //player.animations.play('left')
 }
 
 </script>
