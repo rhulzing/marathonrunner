@@ -34,8 +34,13 @@ function preload()
 
 var platforms = [];
 var player;
+var kill_plane;
+var level_gate;
 var level;
 var cursors;
+var spacebar;
+var is_gliding;
+var gliding_timer;
 
 function create()
 {
@@ -87,13 +92,32 @@ function create()
     //add physics to our player
     //game.physics.arcade.enable(player);
     game.physics.enable(player, Phaser.Physics.ARCADE);
-    player.body.gravity.y = 400;
+    player.body.gravity.y = 1000;
+    is_gliding = false;
+
+    // Add kill plane
+    kill_plane = game.add.sprite(0, 480+32);
+    kill_plane.scale.x = game.world.width;
+    game.physics.enable(kill_plane, Phaser.Physics.ARCADE);
+    kill_plane.fixedToCamera = true;
+
+    // Add level gate
+    level_gate = game.add.sprite(640, 0);
+    level_gate.scale.y = game.world.height;
+    game.physics.enable(level_gate, Phaser.Physics.ARCADE);
+    level_gate.fixedToCamera = true;
+
 
     // add our player animations
-    player.animations.add('left', [0, 1, 2, 3, 4], 10, true);
+    player.animations.add('run', [0, 1, 2, 3, 4], 33, true);
+    player.animations.add('jump', [10,11,12,13,14,15,16], 33, true);
+    player.animations.add('glide', [20,21,22,23,24,25,26,27,28,28,30,31,32,33,34,35,36,37,38,39], 33, true);
     level.addCollisionObject(player);
+    game.camera.follow(player);
 
     cursors = game.input.keyboard.createCursorKeys();
+    spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    player.body.velocity.x = 0;
 
 }
 
@@ -101,8 +125,15 @@ function update()
 {
     // collide the player with the platforms.
     level.update();
+
+    console.log("player y pos: " + player.body.y);
+
+    // collide the player with the kill plane.
+    game.physics.arcade.overlap(player, kill_plane, killPlayer, null, this);
+    // collide the player with the level gate.
+    game.physics.arcade.overlap(player, level_gate, resetLevel, null, this);
     
-    player.animations.play('left')
+    //player.animations.play('run')
 
     // debug code to check the level out.
     if(cursors.left.isDown)
@@ -113,50 +144,50 @@ function update()
     {
         game.camera.x += 5;
     }
-    //floor.body.velocity.x = 100;
-    /*platforms[0].forEach(function(sprite) {
-        sprite.body.velocity.x = -100;
-        if (sprite.body.x <= -32)
+    if(spacebar.isDown && player.body.blocked.down)
+    {
+        player.body.velocity.y = -550;
+        if(player.animations.currentAnim.name != 'jump')
         {
-            sprite.body.x = 640;
+            player.animations.play('jump', null, false);
+            is_gliding = true;
+            //  Create our Timer
+            gliding_timer = game.time.create(false);
+            //  Set a TimerEvent to occur after 2 seconds
+            gliding_timer.add(2000, stopGliding, this);
+            gliding_timer.start();
         }
-    })
-    platforms[1].forEach(function(sprite) {
-        sprite.body.velocity.x = -100;
-        if (sprite.body.x <= -32)
+    }
+    if(spacebar.isDown && !player.body.blocked.down && player.body.velocity.y >= 0 && is_gliding == true)
+    {
+        if(player.animations.currentAnim.name != 'glide')
         {
-            sprite.body.x = 640;
+            player.animations.play('glide');
         }
-    })
-    platforms[2].forEach(function(sprite) {
-        sprite.body.velocity.x = -100;
-        if (sprite.body.x <= -32)
+        player.body.velocity.y = 0;
+    }
+    if(!spacebar.isDown && player.body.blocked.down)
+    {
+        player.animations.play('run');
+        if(player.body.velocity.x == 0)
         {
-            sprite.body.x = 640;
+            player.body.velocity.x = 300;
         }
-    })*/
-
+        is_gliding = false;
+        if(gliding_timer)
+        {
+            gliding_timer.stop();
+            gliding_timer = null;
+        }
+    }
     
+    
+}
 
-    if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) &&
-        player.body.touching.down)
-    {
-        player.body.velocity.y = -300;
-        player.animations.stop();
-    }
-    if(player.body.touching.down)
-    {
-        player.body.velocity.x = 100;
-    }
-    else
-    {
-        player.body.velocity.x = 0;
-    }
+function stopGliding() {
+    is_gliding = false;
+    gliding_timer = null;
 
-    //if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
-    //{
-    //  player.body.velocity.x -= 50;
-    //}
 }
 
 function render()
@@ -167,6 +198,39 @@ function render()
 function playRunAnim(player, platform)
 {
     //player.animations.play('left')
+}
+
+function killPlayer(player_sprite, plane)
+{
+    player.body.x = 32;
+    player.body.y = game.world.height - 350;
+    player.body.velocity.x = 0;
+}
+
+function resetLevel(sprite, gate)
+{
+    // create our player
+    //player.destroy();
+    //player = game.add.sprite(32, game.world.height - 350, 'player');
+
+    //add physics to our player
+    //game.physics.arcade.enable(player);
+    //game.physics.enable(player, Phaser.Physics.ARCADE);
+    //player.body.gravity.y = 1000;
+
+    // Reset the player
+    player.body.x = 32;
+    player.body.y = game.world.height - 350;
+    player.body.velocity.x = 0;
+
+    // Reset the level
+    level.destroy(); // kill the old level
+    //level = new phaserLevelGenerator(game, 'area03');
+    level.generateLevel();
+    level.addCollisionObject(player);
+    player.bringToTop();
+    
+    
 }
 
 </script>

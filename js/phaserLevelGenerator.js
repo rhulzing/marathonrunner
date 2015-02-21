@@ -56,9 +56,7 @@ var phaserLevelGenerator = function(phaserGame, levelName)
     this.playerStart = {x:0, y:0};
 
     this.game = phaserGame;
-    this.level = this.game.add.tilemap(levelName);
-    this.level.addTilesetImage('forest');
-    this.level.addTilesetImage('metatiles32x32');
+    this.level = null;
 
     this.generatePatchColumn = function(height, segmentLengths, segmentData){
         var patch = new TilePatch().init(0,0,1,height);
@@ -162,8 +160,24 @@ var phaserLevelGenerator = function(phaserGame, levelName)
         this.game.physics.arcade.collide(this.collisionObjects, this.collision);
     };
 
+    this.destroy = function()
+    {
+        this.background1.destroy();
+        this.background2.destroy();
+        this.background3.destroy();
+
+        this.foreground.destroy();
+        this.collision.destroy();
+        this.level.destroy();
+        this.collisionObjects = [];
+    };
+
     this.generateLevel = function()
     {
+        this.level = this.game.add.tilemap(levelName);
+        this.level.addTilesetImage('forest');
+        this.level.addTilesetImage('metatiles32x32');
+
         var tilesets = this.level.tilesets;
         //var layers = this.level.layers;
         
